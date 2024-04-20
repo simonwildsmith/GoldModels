@@ -13,7 +13,7 @@ Step 1: Load the data
 """
 
 # Load the data
-data_path = "datasets/cleaned/merged.csv"
+data_path = "C:/Users/s_wil/OneDrive/Documents/Macro/datasets/cleaned/merged.csv"
 data = pd.read_csv(data_path)
 print(data.head())
 
@@ -54,6 +54,12 @@ print(f"Test set shape: {X_test.shape}, {y_test.shape}")
 Setup Pytorch for a Simple Linear Model
 """
 
+model_params = {
+    "learning_rate": 0.001,
+    "num_epochs": 200,
+    "batch_size": 32,
+}
+
 # Convert arrays to PyTorch tensors
 train_features = torch.tensor(X_train, dtype=torch.float32)
 train_targets = torch.tensor(y_train.values, dtype=torch.float32).view(-1, 1)
@@ -68,7 +74,7 @@ val_dataset = TensorDataset(val_features, val_targets)
 test_dataset = TensorDataset(test_features, test_targets)
 
 # Create Data Loaders
-batch_size = 64
+batch_size = model_params["batch_size"]
 train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(dataset=val_dataset, batch_size=batch_size, shuffle=False)
 test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False)
@@ -93,7 +99,7 @@ model = LinearRegressionModel(input_size)
 
 # Define the loss function and optimizer
 criterion = nn.MSELoss()
-optimizer = torch.optim.SGD(model.parameters(), lr=0.0005)
+optimizer = torch.optim.SGD(model.parameters(), lr=model_params["learning_rate"])
 
 """
 Step 4: Train the model concurrently with the validation set
@@ -154,7 +160,7 @@ def predict(model, test_loader):
 Step 5: Plot the losses
 """
 
-num_epochs = 300
+num_epochs = model_params["num_epochs"]
 train_losses, val_losses = train_and_evaluate(
     model, train_loader, val_loader, criterion, optimizer, num_epochs
 )
@@ -194,3 +200,27 @@ plt.title("True vs Predicted Prices")
 plt.legend()
 plt.show()
 plt.grid(True)
+
+# print the model weights next to the feature names
+feature_names = X.columns
+weights = model.linear.weight.data.numpy().flatten()
+bias = model.linear.bias.data.numpy().flatten()
+
+# append the model params, final losses, and weights for each feature to a csv
+model_params["test_loss"] = test_loss
+model_params["final_train_loss"] = train_losses[-1]
+model_params["final_val_loss"] = val_losses[-1]
+model_params["weights"] = weights.tolist()
+model_params["bias"] = bias.tolist()
+
+# Create a dictionary of feature names and their corresponding weights
+feature_weights = {feature: weight for feature, weight in zip(feature_names, weights)}
+
+# Append the feature weights to the model_params dictionary
+model_params["feature_weights"] = feature_weights
+
+model_params_list = [model_params]  # Convert the dictionary to a list of dictionaries
+
+model_params_df = pd.DataFrame(model_params_list)  # Create a DataFrame with the correct shape
+model_params_df.to_csv("C:/Users/s_wil/OneDrive/Documents/Macro/results/linear_regression/simple_linear_regression.csv", mode='a', header=False, index=False)
+
