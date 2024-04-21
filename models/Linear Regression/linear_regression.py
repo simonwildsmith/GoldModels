@@ -12,8 +12,12 @@ import matplotlib.pyplot as plt
 Step 1: Load the data
 """
 
-# Load the data
-data_path = "C:/Users/s_wil/OneDrive/Documents/Macro/datasets/cleaned/merged.csv"
+# When working on codespaces
+data_path = "datasets/cleaned/merged.csv"
+
+# When working on personal machine
+#data_path = "C:/Users/s_wil/OneDrive/Documents/Macro/datasets/cleaned/merged.csv"
+
 data = pd.read_csv(data_path)
 print(data.head())
 
@@ -55,7 +59,7 @@ Setup Pytorch for a Simple Linear Model
 """
 
 model_params = {
-    "learning_rate": 0.001,
+    "learning_rate": 0.0005,
     "num_epochs": 200,
     "batch_size": 32,
 }
@@ -222,5 +226,10 @@ model_params["feature_weights"] = feature_weights
 model_params_list = [model_params]  # Convert the dictionary to a list of dictionaries
 
 model_params_df = pd.DataFrame(model_params_list)  # Create a DataFrame with the correct shape
-model_params_df.to_csv("C:/Users/s_wil/OneDrive/Documents/Macro/results/linear_regression/simple_linear_regression.csv", mode='a', header=False, index=False)
+
+#When working on codespaces
+model_params_df.to_csv("results/linear_regression/simple_linear_regression.csv", mode='a', header=True, index=False)
+
+#When working on personal machine
+#model_params_df.to_csv("simple_linear_regression.csv", mode='a', header=False, index=False)
 
