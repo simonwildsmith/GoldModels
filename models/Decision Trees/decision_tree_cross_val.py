@@ -36,13 +36,8 @@ X = data.drop(columns=["Date", "Historical Gold Prices_cleaned"])
 y = data["Historical Gold Prices_cleaned"]
 
 # Split the data into training and test sets
-X_train, X_temp, y_train, y_temp = train_test_split(
+X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
-)
-
-# Split the data into validation and test sets
-X_val, X_test, y_val, y_test = train_test_split(
-    X_temp, y_temp, test_size=0.5, random_state=42
 )
 
 # Normalize the features
@@ -50,28 +45,24 @@ scaler = StandardScaler()
 scaler.fit(X_train)
 
 # Scale the training, validation, and test data
-X_train = scaler.transform(X_train)
-X_val = scaler.transform(X_val)
-X_test = scaler.transform(X_test)
+X_train_scaled = scaler.transform(X_train)
+X_test_scaled = scaler.transform(X_test)
 
 # Define training parameters
-train_params = {"max_depth": 7, "random_state": 42}
+train_params = {"max_depth": 1, "random_state": 42}
 
 # Initialize the DecisionTreeRegressor
 model = DecisionTreeRegressor(**train_params)
 
+# Perform cross-vlaidation on the training set
+scores = cross_val_score(model, X_train_scaled, y_train, cv=5, scoring="neg_mean_squared_error")
+
 # Train the model using the scaled training data
-model.fit(X_train, y_train)
+model.fit(X_train_scaled, y_train)
 
 # Predict the target values
-y_train_pred = model.predict(X_train)
-y_val_pred = model.predict(X_val)
 y_test_pred = model.predict(X_test)
-
-# Calculate the mean squared errors
-train_mse = mean_squared_error(y_train, y_train_pred)
-val_mse = mean_squared_error(y_val, y_val_pred)
 test_mse = mean_squared_error(y_test, y_test_pred)
-print(f"Training MSE: {train_mse}")
-print(f"Validation MSE: {val_mse}")
-print(f"Test MSE: {test_mse}")
+
+print(f"Test MSE: {test_mse:.4f}")
+print(f"Cross-validated MSE: {-scores.mean():.4f} (+/- {scores.std()*2:.4f})")
