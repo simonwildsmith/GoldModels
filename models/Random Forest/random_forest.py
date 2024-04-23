@@ -10,14 +10,14 @@ Data Load and preprocessing
 '''
 
 # When working on codespaces
-data_path = "datasets/cleaned/merged.csv"
+#data_path = "datasets/cleaned/merged.csv"
 
 # When working on personal machine
-#data_path = "C:/Users/s_wil/OneDrive/Documents/Macro/datasets/cleaned/merged.csv"
+data_path = "C:/Users/s_wil/OneDrive/Documents/Macro/datasets/cleaned/merged.csv"
 
 data = pd.read_csv(data_path)
 
-"""
+""" 
 Step 2: Preprocess the data
 """
 
@@ -48,7 +48,7 @@ X_test_scaled = scaler.transform(X_test)
 
 # Define training parameters
 train_params = {
-    "n_estimators": 200,
+    "n_estimators": 100,
     "max_depth":5,
     "random_state": 42
 }
