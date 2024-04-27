@@ -1,1 +1,11 @@
 results/linear_regression/all_combinations_results.csv
+datasets/CHNMAINLANDEPU.csv
+datasets/DGS10.csv
+datasets/MICH.csv
+datasets/SP500_Historical_Prices.csv
+datasets/cleaned/CHNMAINLANDEPU_cleaned.csv
+datasets/cleaned/DGS10_cleaned.csv
+datasets/cleaned/merged.csv
+datasets/cleaned/MICH_cleaned.csv
+datasets/cleaned/SP500_Historical_Prices_cleaned.csv
+results/linear_regression/simple_linear_regression.csv

@@ -38,17 +38,19 @@ if data.isnull().values.any():
 X = data.drop(columns=["Date", "Historical Gold Prices_cleaned"])
 y = data["Historical Gold Prices_cleaned"]
 
-# Normalize the features
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-
 # Split the data into train, validation, and test sets
 X_train, X_temp, y_train, y_temp = train_test_split(
-    X_scaled, y, test_size=0.2, random_state=42
+    X, y, test_size=0.2, random_state=42
 )
 X_val, X_test, y_val, y_test = train_test_split(
     X_temp, y_temp, test_size=0.5, random_state=42
 )
+
+# Scale the features
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_val = scaler.transform(X_val)
+X_test = scaler.transform(X_test)
 
 print(f"Training set shape: {X_train.shape}, {y_train.shape}")
 print(f"Validation set shape: {X_val.shape}, {y_val.shape}")
@@ -109,6 +111,11 @@ optimizer = torch.optim.SGD(model.parameters(), lr=model_params["learning_rate"]
 Step 4: Train the model concurrently with the validation set
 """
 
+def l1_penalty(model, l1_lambda):
+    l1_reg = torch.tensor(0.0)
+    for param in model.parameters():
+        l1_reg += torch.norm(param, 1)
+    return l1_lambda * l1_reg
 
 def train_and_evaluate(
     model, train_loader, val_loader, criterion, optimizer, num_epochs
@@ -123,7 +130,7 @@ def train_and_evaluate(
         for inputs, targets in train_loader:
             optimizer.zero_grad()
             outputs = model(inputs)
-            loss = criterion(outputs, targets)
+            loss = criterion(outputs, targets) + l1_penalty(model, 0.03)
             loss.backward()
             optimizer.step()
             train_loss += loss.item() * inputs.size(0)

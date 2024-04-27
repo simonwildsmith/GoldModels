@@ -182,6 +182,26 @@ def main():
         "simonwildsmith/m2-money-supply": ["M2SL", 0, 1, True, True],
         # Dataset frequency: monthly, data may lie on non-business days
         "simonwildsmith/umcsent": ["UMCSENT", 0, 1, False, True],
+        # Dataset frequency: daily not including weekends
+        "simonwildsmith/market-yield-on-us-treasury-securities-10-year": [
+            "DGS10",
+            0,
+            1,
+            False,
+            False,
+        ],
+        # Data frequency: monthly, data may lie on non-business days
+        "simonwildsmith/inflation-expectation-12-month": ["MICH", 0, 1, False, True],
+        # Data frequency: monthly, data may lie on non-business days
+        "simonwildsmith/mainland-papers-china-economic-uncertainty-index": [
+            "CHNMAINLANDEPU",
+            0,
+            1,
+            False,
+            True,
+        ],
+        # Data frequency: daily not including weekends
+        "simonwildsmith/sp-500": ["SP500_Historical_Prices", 0, 4, True, False],
     }
 
     cleaned_data_dir = "datasets/cleaned"
