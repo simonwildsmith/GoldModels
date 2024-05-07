@@ -9,3 +9,36 @@ datasets/cleaned/merged.csv
 datasets/cleaned/MICH_cleaned.csv
 datasets/cleaned/SP500_Historical_Prices_cleaned.csv
 results/linear_regression/simple_linear_regression.csv
+datasets/cleaned/monthly_merged.csv
+datasets_month/CHNMAINLANDEPU.csv
+datasets_month/Consumer Price Index.csv
+datasets_month/DGS10.csv
+datasets_month/Effective Funds Rate DFF.csv
+datasets_month/GDP growth.csv
+datasets_month/Historical Gold Prices.csv
+datasets_month/M2SL.csv
+datasets_month/MICH.csv
+datasets_month/SP500_Historical_Prices.csv
+datasets_month/T10Y2Y.csv
+datasets_month/UMCSENT.csv
+datasets_month/Unemployment Rate.csv
+datasets_month/United States uncertainty index.csv
+datasets_month/US Dollar Index (DXY).csv
+datasets_month/cleaned/CHNMAINLANDEPU_cleaned.csv
+datasets_month/cleaned/Consumer Price Index_cleaned.csv
+datasets_month/cleaned/DGS10_cleaned.csv
+datasets_month/cleaned/Effective Funds Rate DFF_cleaned.csv
+datasets_month/cleaned/GDP growth_cleaned.csv
+datasets_month/cleaned/Historical Gold Prices_cleaned.csv
+datasets_month/cleaned/M2SL_cleaned.csv
+datasets_month/cleaned/MICH_cleaned.csv
+datasets_month/cleaned/monthly_merged.csv
+datasets_month/cleaned/SP500_Historical_Prices_cleaned.csv
+datasets_month/cleaned/T10Y2Y_cleaned.csv
+datasets_month/cleaned/UMCSENT_cleaned.csv
+datasets_month/cleaned/Unemployment Rate_cleaned.csv
+datasets_month/cleaned/United States uncertainty index_cleaned.csv
+datasets_month/cleaned/US Dollar Index (DXY)_cleaned.csv
+results/linear_regression/simple_linear_regression_v2.csv
+results/linear_regression/simple_linear_regression.csv
+results/linear_regression/simple_linear_regression.csv

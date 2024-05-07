@@ -6,6 +6,7 @@ import torch
 from torch.utils.data import TensorDataset, DataLoader
 import torch.nn as nn
 import matplotlib.pyplot as plt
+import os
 
 
 """
@@ -16,7 +17,7 @@ Step 1: Load the data
 data_path = "datasets/cleaned/merged.csv"
 
 # When working on personal machine
-#data_path = "C:/Users/s_wil/OneDrive/Documents/Macro/datasets/cleaned/merged.csv"
+# data_path = "C:/Users/s_wil/OneDrive/Documents/Macro/datasets/cleaned/merged.csv"
 
 data = pd.read_csv(data_path)
 print(data.head())
@@ -37,6 +38,17 @@ if data.isnull().values.any():
 # Split the data into features and target
 X = data.drop(columns=["Date", "Historical Gold Prices_cleaned"])
 y = data["Historical Gold Prices_cleaned"]
+
+# Drop additional features as needed
+X = X.drop(
+    columns=[
+        "CHNMAINLANDEPU_cleaned",
+        "M2SL_cleaned",
+        "T10Y2Y_cleaned",
+        "US Dollar Index (DXY)_cleaned"
+    ]
+)
+
 
 # Split the data into train, validation, and test sets
 X_train, X_temp, y_train, y_temp = train_test_split(
@@ -62,8 +74,9 @@ Setup Pytorch for a Simple Linear Model
 
 model_params = {
     "learning_rate": 0.0005,
-    "num_epochs": 200,
+    "num_epochs": 300,
     "batch_size": 32,
+    "l1_lambda": 0.02,
 }
 
 # Convert arrays to PyTorch tensors
@@ -111,11 +124,13 @@ optimizer = torch.optim.SGD(model.parameters(), lr=model_params["learning_rate"]
 Step 4: Train the model concurrently with the validation set
 """
 
+
 def l1_penalty(model, l1_lambda):
     l1_reg = torch.tensor(0.0)
     for param in model.parameters():
         l1_reg += torch.norm(param, 1)
     return l1_lambda * l1_reg
+
 
 def train_and_evaluate(
     model, train_loader, val_loader, criterion, optimizer, num_epochs
@@ -130,7 +145,9 @@ def train_and_evaluate(
         for inputs, targets in train_loader:
             optimizer.zero_grad()
             outputs = model(inputs)
-            loss = criterion(outputs, targets) + l1_penalty(model, 0.03)
+            loss = criterion(outputs, targets) + l1_penalty(
+                model, model_params["l1_lambda"]
+            )
             loss.backward()
             optimizer.step()
             train_loss += loss.item() * inputs.size(0)
@@ -141,9 +158,12 @@ def train_and_evaluate(
         val_loss = evaluate_model(model, val_loader, criterion)
         val_losses.append(val_loss)
 
-        print(f"Epoch {epoch+1}/{num_epochs}, Training Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f})")
+        print(
+            f"Epoch {epoch+1}/{num_epochs}, Training Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f})"
+        )
 
     return train_losses, val_losses
+
 
 def evaluate_model(model, val_loader, criterion):
     model.eval()
@@ -154,6 +174,7 @@ def evaluate_model(model, val_loader, criterion):
             loss = criterion(outputs, targets)
             running_loss += loss.item() * inputs.size(0)
     return running_loss / len(val_loader.dataset)
+
 
 def predict(model, test_loader):
     model.eval()  # Set the model to evaluation mode
@@ -212,31 +233,30 @@ plt.legend()
 plt.show()
 plt.grid(True)
 
-# print the model weights next to the feature names
+# Define file path
+file_path = "results/linear_regression/simple_linear_regression_v2.csv"
+
+# Feature names and weights
 feature_names = X.columns
 weights = model.linear.weight.data.numpy().flatten()
-bias = model.linear.bias.data.numpy().flatten()
 
-# append the model params, final losses, and weights for each feature to a csv
-model_params["test_loss"] = test_loss
-model_params["final_train_loss"] = train_losses[-1]
-model_params["final_val_loss"] = val_losses[-1]
-model_params["weights"] = weights.tolist()
-model_params["bias"] = bias.tolist()
+# Print L1_lambda
+print(f"L1_lambda: {model_params['l1_lambda']}")
 
-# Create a dictionary of feature names and their corresponding weights
-feature_weights = {feature: weight for feature, weight in zip(feature_names, weights)}
+# Check if the CSV exists and create or update accordingly
+if not os.path.exists(file_path):
+    # Initialize DataFrame with feature names as rows and no columns
+    df = pd.DataFrame(index=feature_names)
+    df.to_csv(file_path)
 
-# Append the feature weights to the model_params dictionary
-model_params["feature_weights"] = feature_weights
+# Load the existing CSV
+df = pd.read_csv(file_path, index_col=0)
 
-model_params_list = [model_params]  # Convert the dictionary to a list of dictionaries
+# Find the next column name which should be the test number
+next_column = f"Test_{df.shape[1]+1}" if df.shape[1] > 0 else "Test_1"
 
-model_params_df = pd.DataFrame(model_params_list)  # Create a DataFrame with the correct shape
+# Append new weights as a new column
+df[next_column] = weights
 
-#When working on codespaces
-model_params_df.to_csv("results/linear_regression/simple_linear_regression.csv", mode='a', header=True, index=False)
-
-#When working on personal machine
-#model_params_df.to_csv("simple_linear_regression.csv", mode='a', header=False, index=False)
-
+# Save the updated DataFrame
+df.to_csv(file_path)
