@@ -20,10 +20,7 @@ def adjust_dates(df, freq):
     """
     Adjusts the dates of the DataFrame backward to align with the reported period.
     """
-    if freq == "Q":
-        # Shift quarterly data to the start of the quarter
-        df.index = df.index - pd.offsets.QuarterBegin(startingMonth=1)
-    elif freq == "M":
+    if freq == "M" or freq == "Q":
         # Shift monthly data to the start of the month
         df.index = df.index - pd.offsets.MonthBegin(1)
     return df
