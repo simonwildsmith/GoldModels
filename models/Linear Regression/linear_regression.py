@@ -14,7 +14,8 @@ Step 1: Load the data
 """
 
 # When working on codespaces
-data_path = "datasets/cleaned/merged.csv"
+#data_path = "datasets/cleaned/merged.csv"
+data_path = "datasets_month/cleaned/monthly_merged.csv"
 
 # When working on personal machine
 # data_path = "C:/Users/s_wil/OneDrive/Documents/Macro/datasets/cleaned/merged.csv"
@@ -36,18 +37,22 @@ if data.isnull().values.any():
 
 
 # Split the data into features and target
-X = data.drop(columns=["Date", "Historical Gold Prices_cleaned"])
-y = data["Historical Gold Prices_cleaned"]
+#X = data.drop(columns=["Date", "Historical Gold Prices_cleaned"])
+#y = data["Historical Gold Prices_cleaned"]
+
+# Split the data into features and target
+X = data.drop(columns=["Date", "Historical Gold Prices"])
+y = data["Historical Gold Prices"]
 
 # Drop additional features as needed
-X = X.drop(
-    columns=[
-        "CHNMAINLANDEPU_cleaned",
-        "M2SL_cleaned",
-        "T10Y2Y_cleaned",
-        "US Dollar Index (DXY)_cleaned"
-    ]
-)
+# X = X.drop(
+#     columns=[
+#         "CHNMAINLANDEPU_cleaned",
+#         "M2SL_cleaned",
+#         "T10Y2Y_cleaned",
+#         "US Dollar Index (DXY)_cleaned"
+#     ]
+# )
 
 
 # Split the data into train, validation, and test sets

@@ -8,6 +8,7 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 
 # Load the data
+#data_path = "datasets_month/cleaned/monthly_merged.csv"
 data_path = "datasets/cleaned/merged.csv"
 data = pd.read_csv(data_path)
 print(data.head())
@@ -20,8 +21,11 @@ if data.isnull().values.any():
     print(f"Number of rows removed: {num_rows_before - num_rows_after}")
 
 # Split the data into features and target
-X = data.drop(columns=["Date", "Historical Gold Prices_cleaned"])
-y = data["Historical Gold Prices_cleaned"]
+#X = data.drop(columns=["Date", "Historical Gold Prices_cleaned"])
+#y = data["Historical Gold Prices_cleaned"]
+
+X = data.drop(columns=["Date", "Historical Gold Prices"])
+y = data["Historical Gold Prices"]
 
 # Normalize the features
 scaler = StandardScaler()
